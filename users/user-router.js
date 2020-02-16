@@ -16,12 +16,10 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// find all users in math department
 router.get("/department", department("math"), async (req, res, next) => {
   try {
-    // how to decode user.id from token so that you only fetch or post data for one user
-    // let decoded = jwt.decode(req.headers.authorization);
-    // console.log(decoded.user.id);
-    const users = await Users.find();
+    const users = await Users.findByDepartment("math");
     res.status(200).json(users);
   } catch (err) {
     next(err);
@@ -31,8 +29,8 @@ router.get("/department", department("math"), async (req, res, next) => {
 function department(catagory) {
   return function(req, res, next) {
     if (
-      req.user &&
-      res.user.department &&
+      req.user.department &&
+      req.user.department &&
       req.user.department.toLowerCase() === catagory
     ) {
       next();
