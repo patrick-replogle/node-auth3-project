@@ -23,14 +23,27 @@ router.post("/register", validateUser, async (req, res, next) => {
 });
 
 router.post("/login", async (req, res, next) => {
-  try {
-    if (!req.body.username || !req.body.password) {
-      res
-        .status(400)
-        .json({ message: "Missing required username and password fields" });
-    }
+  if (!req.body.username || !req.body.password) {
+    return res
+      .status(400)
+      .json({ message: "Missing required username and password fields" });
+  }
 
+  try {
     let { username, password } = req.body;
+    const user = await Users.findBy({ username }).first();
+
+    if (user && bcrypt.compareSync(password, user.password)) {
+      const token = signToken(user);
+
+      res.status(200).json({
+        message: `Welcome ${user.username}!`,
+        user_id: user.id,
+        token
+      });
+    } else {
+      res.status(401).json({ message: "Invalid credentials" });
+    }
   } catch (err) {
     next(err);
   }
