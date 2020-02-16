@@ -2,13 +2,17 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const { validateUser } = require("../middleware/validate.js");
+const {
+  validateRegister,
+  validateLogin
+} = require("../middleware/validate.js");
 
 const Users = require("../users/user-model.js");
 
 const { jwtSecret } = require("../config/secret.js");
 
-router.post("/register", validateUser, async (req, res, next) => {
+// register a new user
+router.post("/register", validateRegister, async (req, res, next) => {
   try {
     let user = req.body;
     const hash = bcrypt.hashSync(user.password, 10);
@@ -22,13 +26,8 @@ router.post("/register", validateUser, async (req, res, next) => {
   }
 });
 
-router.post("/login", async (req, res, next) => {
-  if (!req.body.username || !req.body.password) {
-    return res
-      .status(400)
-      .json({ message: "Missing required username and password fields" });
-  }
-
+// user login route
+router.post("/login", validateLogin, async (req, res, next) => {
   try {
     let { username, password } = req.body;
     const user = await Users.findBy({ username }).first();
@@ -49,6 +48,7 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
+// create token helper function
 function signToken(user) {
   const payload = {
     user
