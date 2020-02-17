@@ -5,7 +5,8 @@ module.exports = {
   findBy,
   findById,
   add,
-  findByDepartment
+  findByDepartment,
+  getUserGrades
 };
 
 function find() {
@@ -30,4 +31,11 @@ function findById(id) {
 
 function findByDepartment(department) {
   return db("users").where("department", department);
+}
+
+function getUserGrades(id) {
+  return db("grades")
+    .select("grades.grade", "grades.user_id")
+    .join("users", "users.id", "grades.user_id")
+    .where("user_id", id);
 }

@@ -16,7 +16,7 @@ server.use("/api/auth", authRouter);
 server.use("/api/users", restricted, userRouter);
 
 server.use((err, req, res, next) => {
-  console.log(err.message);
+  console.log(err.message, err);
   return res.status(500).json({
     message: "Something went wrong. Try again later"
   });
