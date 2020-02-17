@@ -38,7 +38,7 @@ router.get("/department", department(), async (req, res, next) => {
 router.get("/grades", async (req, res, next) => {
   try {
     let decoded = jwt.decode(req.headers.authorization);
-    const id = decoded.user.id;
+    const { id } = decoded.user;
 
     const grades = await Users.getUserGrades(id);
     if (grades.length > 0) {
