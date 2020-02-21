@@ -51,7 +51,9 @@ router.post("/login", validateLogin, async (req, res, next) => {
 // create token helper function
 function signToken(user) {
   const payload = {
-    user
+    id: user.id,
+    username: user.username,
+    department: user.department
   };
 
   const options = {
